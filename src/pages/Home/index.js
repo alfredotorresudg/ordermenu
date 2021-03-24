@@ -1,43 +1,55 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { Container, Typography, Card, Grid, TextField, Button } from '@material-ui/core';
+import { LocalDining } from '@material-ui/icons';
+import styles from './style';
 
-import { getDemoRequest } from '../../redux/actions/demoActions';
+// export default () => (<div>Home</div>)
+export default ({ history }) => {
+  const [serchText, setSearchText] = useState('');
+  const classes = styles();
+  const handleSearchTextChange = event => {
+    setSearchText(event.target.value);
+  };
 
-import User from '../../components/User';
+  const handleClean = event => {
+    setSearchText('');
+  };
 
-class Home extends Component {
-	componentWillMount() {
-		this.props.getDemoRequest('hey');
-	}
-	render() {
-		const { users } = this.props;
+  const handleSearch = event => {
+    history.push(`/results?param=${serchText}`)
+  }
 
-		let items = [];
-		if (typeof users !== 'undefined') {
-			items = users.map((value, index) => {
-				return <User key={index} {...value} />;
-			});
-		}
-		return <div>{items}</div>;
-	}
-}
-
-const mapDispatchToProps = (dispatch, props) => {
-	return {
-		getDemoRequest: payload => {
-			dispatch(getDemoRequest(payload));
-		}
-	};
-};
-const mapStateToProps = state => {
-	return {
-		users: state.demoReducer[0]
-	};
-};
-
-Home.propTypes = {
-	dispatch: PropTypes.func
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+  return (
+    <Container className={classes.container}>
+      <Card className={classes.cardContainer}>
+        <Grid container className={classes.titleGridContainer}>
+          <Grid>
+            <Typography className={classes.title}> 
+              UDG Restaurante!
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container className={classes.titleGridContainer}>
+          <Grid>
+            <Typography className={classes.subtitle}> 
+            Busqueda platillos
+            </Typography>
+          </Grid>
+          <Grid>
+            <LocalDining className={classes.iconRest}/>
+          </Grid>
+        </Grid>
+        <TextField
+          className={classes.textFieldSearch}
+          value={serchText}
+          placeholder="Buscar..."
+          onChange={handleSearchTextChange}       
+        />
+        <Grid className={classes.buttonsContainer}>
+          <Button variant="contained" onClick={handleClean}>Limpiar</Button>
+          <Button variant="contained" className={classes.searchButton} color="primary" size="large" onClick={handleSearch}>Buscar</Button>
+        </Grid>
+      </Card>
+    </Container>
+  )
+} 
